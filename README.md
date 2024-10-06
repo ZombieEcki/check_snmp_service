@@ -6,12 +6,16 @@ Service Check for Windows Server/Clients
 
 -H ADDRESS
 Name or IP address of host (default: 127.0.0.1)
+
 -C STRING
 Community name for the host's SNMP agent (default: public)
--A STRING"
+
+-A STRING
 Name of Service (default: svchost.exe)
+
 -h
 Print this help screen
+
 -V
 Print version and license information
 
