@@ -4,10 +4,10 @@ Checks the Windows Service over SNMP
 
 Service Check for Windows Server/Clients
 
--H ADDRESS
+-H
 Name or IP address of host (default: 127.0.0.1)
 
--C STRING
+-C 
 Community name for the host's SNMP agent (default: public)
 
 -A STRING
