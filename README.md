@@ -24,4 +24,4 @@ To use this plugin in Icinga, you can add the following configurations to your I
 Look in icinga-plugin.txt
 
 This nagios plugins comes with ABSOLUTELY NO WARRANTY.
-You may redistribute copies of the plugins under the terms of the GNU General Public License v2. 
+You may redistribute copies of the plugins under the terms of the GNU General Public License v3.
