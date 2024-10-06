@@ -1,27 +1,27 @@
 # check_snmp_service
-Checks the Windows Service over SNMP 
 
+**check_snmp_service** is a plugin for checking Windows services over SNMP, designed for monitoring with Nagios and Icinga. This plugin uses the `snmpget` and `snmpwalk` commands from the NET-SNMP package and supports performance data output.
 
-Service Check for Windows Server/Clients
+## Usage
 
--H
-Name or IP address of host (default: 127.0.0.1)
+The plugin checks if a specific Windows service is available on a server or client and provides status information based on warning and critical thresholds. If the warning and critical thresholds are set to 0, the script automatically returns an OK state.
 
--C 
-Community name for the host's SNMP agent (default: public)
+### Options
 
--A STRING
-Name of Service (default: svchost.exe)
+| Option      | Description                                                              |
+|-------------|--------------------------------------------------------------------------|
+| `-H`        | Name or IP address of the host (default: 127.0.0.1)                       |
+| `-C`        | Community name for the host's SNMP agent (default: public)                |
+| `-A` | Name of the service to be checked (default: svchost.exe)                  |
+| `-h`        | Displays this help screen                                                 |
+| `-V`        | Prints version and license information                                    |
 
--h
-Print this help screen
+This Nagios plugin comes with **ABSOLUTELY NO WARRANTY**.
 
--V
-Print version and license information
+## ICINGA Configuration Files
 
+To use this plugin in Icinga, you can add the following configurations to your Icinga configuration files.
+Look in icinga-plugin.txt
 
 This nagios plugins comes with ABSOLUTELY NO WARRANTY.
-
-This plugin uses the 'snmpget' command and the 'snmpwalk' command included with the NET-SNMP package.
-This plugin support performance data output.
-If the percentage of the warning and critical levels are set 0, then the script returns a OK state.
+You may redistribute copies of the plugins under the terms of the GNU General Public License v2. 
