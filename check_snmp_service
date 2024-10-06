@@ -1,0 +1,131 @@
+#!/bin/bash
+
+# check_snmp_service
+# Description : Check the Service EXE Status using SNMP
+# Version : 1.0
+# Author : ZombieEcki
+# Licence : GPLv3
+
+# Commands
+CMD_BASENAME="/usr/bin/basename"
+CMD_SNMPGET="/usr/bin/snmpget"
+CMD_SNMPWALK="/usr/bin/snmpwalk"
+CMD_BC="/usr/bin/bc"
+CMD_AWK="/usr/bin/awk"
+CMD_GREP="/usr/bin/grep"
+CMD_EXPR="/usr/bin/expr"
+
+# Script name
+SCRIPTNAME=`$CMD_BASENAME $0`
+
+# Version
+VERSION="1.0"
+
+# Plugin return codes
+STATE_OK=0
+STATE_WARNING=1
+STATE_CRITICAL=2
+STATE_UNKNOWN=3
+
+# SNMP Pfad for the services
+
+# 'hrSWRunName', HOST-RESOURCES-MIB
+OID_DESC=".1.3.6.1.2.1.25.4.2.1.2"
+
+
+# Default variables
+DESCRIPTION="Unknown"
+STATE=$STATE_UNKNOWN
+CODE=0
+DISK_LABEL=""
+
+# Default options
+COMMUNITY="public"
+HOSTNAME="127.0.0.1"
+APPLICATION="svchost.exe"
+WARNING=0
+CRITICAL=0
+
+# Option processing
+print_usage() {
+  echo "Usage: ./check_snmp_service -H 127.0.0.1 -C public -A svchost.exe"
+  echo "  $SCRIPTNAME -H ADDRESS"
+  echo "  $SCRIPTNAME -C STRING"
+  echo "  $SCRIPTNAME -A STRING"
+  echo "  $SCRIPTNAME -h"
+  echo "  $SCRIPTNAME -V"
+}
+
+
+print_version() {
+  echo $SCRIPTNAME version $VERSION
+  echo ""
+  echo ""
+  echo "This nagios plugins is tested in our enviroment. There is NO WARRANTY."
+  echo "You may redistribute copies of the plugins under the terms of the GNU General Public License v3."
+}
+
+print_help() {
+  print_version
+  echo ""
+  print_usage
+  echo ""
+  echo "Service Check for Windows Servers"
+  echo ""
+  echo "-H ADDRESS"
+  echo "   Name or IP address of host (default: 127.0.0.1)"
+  echo "-C STRING"
+  echo "   Community name for the host's SNMP agent (default: public)"
+  echo "-A STRING"
+  echo "   Name of Service (default: svchost.exe)"
+  echo "-h"
+  echo "   Print this help screen"
+  echo "-V"
+  echo "   Print version and license information"
+  echo ""
+  echo ""
+  echo "This plugin uses the 'snmpget' command and the 'snmpwalk' command included with the NET-SNMP package."
+  echo "This plugin support performance data output."
+  echo "If the percentage of the warning and critical levels are set 0, then the script returns a OK state."
+}
+
+
+while getopts H:C:A:hV OPT
+do
+  case $OPT in
+    H) HOSTNAME="$OPTARG" ;;
+    C) COMMUNITY="$OPTARG" ;;
+    A) APPLICATION=$OPTARG ;;
+    h)
+      print_help
+      exit $STATE_UNKNOWN
+      ;;
+    V)
+      print_version
+      exit $STATE_UNKNOWN
+      ;;
+   esac
+done
+
+
+# snmpwalk -v2c -c <Community-String> <IP-Adresse> .1.3.6.1.2.1.25.4.2.1.2
+# snmpwalk -v2c -c public 10.1.18.12 .1.3.6.1.2.1.25.4.2.1.2
+# snmpget -t 2 -r 2 -v 1 -c public 10.1.18.12 .1.3.6.1.2.1.25.4.2.1.2.4
+# APPLICATION_NAME=`$CMD_SNMPGET -t 2 -r 2 -v 1 -c $COMMUNITY -OvqU $HOSTNAME "${OID_DESC}.${SERVICE_ID}"`
+
+SERVICE_DESC=`$CMD_SNMPWALK -t 2 -r 2 -v 1 -c $COMMUNITY $HOSTNAME "$OID_DESC" | $CMD_GREP -w "$APPLICATION"`
+
+
+
+if [ -n "$SERVICE_DESC" ]; then
+  STATE=$STATE_OK
+  DESCRIPTION="Service/Application - '$APPLICATION' : UP AND RUNNING"
+else
+  STATE=$STATE_CRITICAL
+  DESCRIPTION="ERROR 404 Service/Application - '$APPLICATION' : NOT FOUND"
+fi
+
+
+
+echo $DESCRIPTION
+exit $STATE
